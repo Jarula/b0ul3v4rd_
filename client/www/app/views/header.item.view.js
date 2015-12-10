@@ -15,7 +15,7 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
         },
 
         events: {
-            'click @ui.back': 'showPromotionsList',
+            'click @ui.back': 'showlastList',
             'click @ui.promociones': 'showPromotionsList',
             'click @ui.locales': 'showLocalesList',
             'click @ui.cine': 'showCineList',
@@ -30,19 +30,21 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
             }, 100);
 
             App.Events.on('Header:Promo', function() {
-                that.showBackButton();
+                that.showBackButton(that.showPromotionsList);
+            });
+
+            App.Events.on('Header:Local', function() {
+                that.showBackButton(that.showLocalesList);
             });
         },
 
         showPromotionsList: function() {
-            console.log("showPromotionsList");
             App.Events.trigger('showPromotionsList');
             this.ui.menu.sideNav('hide');
             this.showMenuButton();
         },
 
         showLocalesList: function() {
-            console.log("showLocalesList");
             App.Events.trigger('showLocalesList');
             this.ui.menu.sideNav('hide');
             this.showMenuButton();
@@ -55,14 +57,19 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
             this.showMenuButton();
         },
 
-        showBackButton: function() {
+        showBackButton: function(lastList) {
             this.ui.menu.hide();
             this.ui.back.show();
+            this.lastList = lastList;
         },
 
         showMenuButton: function() {
             this.ui.menu.show();
             this.ui.back.hide();
+        },
+
+        showlastList: function() {
+            this.lastList();
         }
 
     });

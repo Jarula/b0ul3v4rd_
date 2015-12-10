@@ -28207,9 +28207,10 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
                 headerView,
                 promosCollection,
                 promosCollectionView,
-                collectionCached,
+                promosCollectionCached,
                 localesCollection,
-                localesCollectionView;
+                localesCollectionView,
+                localesCollectionCached;
 
             headerView = new Views.Header();
             this.headerRegion.show(headerView);
@@ -28220,7 +28221,7 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
                 expires: 600000,
                 'success': function(collection, response, options) {
                     collection.trigger('fetched');
-                    collectionCached = collection.clone();
+                    promosCollectionCached = collection.clone();
                 }
             });
 
@@ -28237,6 +28238,7 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
                 expires: 600000,
                 'success': function(collection, response, options) {
                     collection.trigger('Locales:fetched');
+                    localesCollectionCached = collection.clone();
                 }
             });
             localesCollection.on('Locales:fetched', function() {
@@ -28249,18 +28251,21 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
                 that.showPromotion(modelId, promosCollection);
             });
 
+            App.Events.on('showLocal', function(modelId) {
+                that.showLocal(modelId, localesCollection);
+            });
+
             App.Events.on('showPromotionsList', function() {
-                that.showPromotionsList(promosCollection, collectionCached, promosCollectionView);
+                that.showPromotionsList(promosCollection, promosCollectionCached, promosCollectionView);
             });
 
             App.Events.on('showLocalesList', function() {
-                that.showLocalesList(localesCollection, localesCollectionView);
+                that.showLocalesList(localesCollection, localesCollectionCached, localesCollectionView);
             });
         },
 
-        showPromotionsList: function(promosCollection, collectionCached, promosCollectionView) {
-            console.log("entra showPromotionsList");
-            promosCollection.reset(collectionCached.models);
+        showPromotionsList: function(promosCollection, promosCollectionCached, promosCollectionView) {
+            promosCollection.reset(promosCollectionCached.models);
 
             if (promosCollectionView.isDestroyed) {
                 promosCollectionView = new Views.Promos({
@@ -28270,7 +28275,9 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
             this.promosRegion.show(promosCollectionView);
         },
 
-        showLocalesList: function(localesCollection, localesCollectionView) {
+        showLocalesList: function(localesCollection, localesCollectionCached, localesCollectionView) {
+            localesCollection.reset(localesCollectionCached.models);
+
             if (localesCollectionView.isDestroyed) {
                 localesCollectionView = new Views.Locales({
                     collection: localesCollection
@@ -28280,11 +28287,21 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
         },
 
         showPromotion: function(modelId, promosCollection) {
+            console.log("modelId -> ", modelId);
             promosCollection.reset(promosCollection.filter(function(model) {
                 return model.get('id') === modelId;
             }));
 
             App.Events.trigger('Header:Promo');
+        },
+
+        showLocal: function(modelTitle, localesCollection) {
+            localesCollection.reset(localesCollection.filter(function(model) {
+                // cambiar title por id
+                return model.get('title') === modelTitle;
+            }));
+
+            App.Events.trigger('Header:Local');
         }
 
     });
@@ -28306,7 +28323,7 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
         },
 
         events: {
-            'click @ui.back': 'showPromotionsList',
+            'click @ui.back': 'showlastList',
             'click @ui.promociones': 'showPromotionsList',
             'click @ui.locales': 'showLocalesList',
             'click @ui.cine': 'showCineList',
@@ -28321,19 +28338,21 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
             }, 100);
 
             App.Events.on('Header:Promo', function() {
-                that.showBackButton();
+                that.showBackButton(that.showPromotionsList);
+            });
+
+            App.Events.on('Header:Local', function() {
+                that.showBackButton(that.showLocalesList);
             });
         },
 
         showPromotionsList: function() {
-            console.log("showPromotionsList");
             App.Events.trigger('showPromotionsList');
             this.ui.menu.sideNav('hide');
             this.showMenuButton();
         },
 
         showLocalesList: function() {
-            console.log("showLocalesList");
             App.Events.trigger('showLocalesList');
             this.ui.menu.sideNav('hide');
             this.showMenuButton();
@@ -28346,20 +28365,23 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
             this.showMenuButton();
         },
 
-        showBackButton: function() {
+        showBackButton: function(lastList) {
             this.ui.menu.hide();
             this.ui.back.show();
+            this.lastList = lastList;
         },
 
         showMenuButton: function() {
             this.ui.menu.show();
             this.ui.back.hide();
+        },
+
+        showlastList: function() {
+            this.lastList();
         }
 
     });
 });
-// 'use strict';
-
 App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) {    
     
     Views.Promo = Marionette.ItemView.extend({
@@ -28379,7 +28401,6 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
         },
 
         showPromotion: function() {
-            // Backbone.history.navigate('promotionsList/' + this.model.id, {trigger:true});
             App.Events.trigger('showPromotion', this.model.id);
         }
     });
@@ -28397,8 +28418,6 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
     });
 
 });
-// 'use strict';
-
 App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) {    
     
     Views.Local = Marionette.ItemView.extend({
@@ -28407,19 +28426,20 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
 
         className: 'row',
 
-        template: __templates.boulevard.local
+        template: __templates.boulevard.local,
 
-        // ui: {
-        //     promotion: '.local'
-        // },
+        ui: {
+            local: '.local'
+        },
 
-        // events: {
-        //     'click @ui.promotion': 'showPromotion'
-        // },
+        events: {
+            'click @ui.local': 'showLocal'
+        },
 
-        // showPromotion: function() {
-        //     App.Events.trigger('showPromotion', this.model.id);
-        // }
+        showLocal: function() {
+            // cambiar title por id
+            App.Events.trigger('showLocal', this.model.get('title'));
+        }
     });
 });
 App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) {

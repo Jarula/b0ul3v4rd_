@@ -1,5 +1,3 @@
-// 'use strict';
-
 App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) {    
     
     Views.Local = Marionette.ItemView.extend({
@@ -8,18 +6,19 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
 
         className: 'row',
 
-        template: __templates.boulevard.local
+        template: __templates.boulevard.local,
 
-        // ui: {
-        //     promotion: '.local'
-        // },
+        ui: {
+            local: '.local'
+        },
 
-        // events: {
-        //     'click @ui.promotion': 'showPromotion'
-        // },
+        events: {
+            'click @ui.local': 'showLocal'
+        },
 
-        // showPromotion: function() {
-        //     App.Events.trigger('showPromotion', this.model.id);
-        // }
+        showLocal: function() {
+            // cambiar title por id
+            App.Events.trigger('showLocal', this.model.get('title'));
+        }
     });
 });

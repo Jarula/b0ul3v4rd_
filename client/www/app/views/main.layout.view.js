@@ -14,9 +14,10 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
                 headerView,
                 promosCollection,
                 promosCollectionView,
-                collectionCached,
+                promosCollectionCached,
                 localesCollection,
-                localesCollectionView;
+                localesCollectionView,
+                localesCollectionCached;
 
             headerView = new Views.Header();
             this.headerRegion.show(headerView);
@@ -27,7 +28,7 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
                 expires: 600000,
                 'success': function(collection, response, options) {
                     collection.trigger('fetched');
-                    collectionCached = collection.clone();
+                    promosCollectionCached = collection.clone();
                 }
             });
 
@@ -44,6 +45,7 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
                 expires: 600000,
                 'success': function(collection, response, options) {
                     collection.trigger('Locales:fetched');
+                    localesCollectionCached = collection.clone();
                 }
             });
             localesCollection.on('Locales:fetched', function() {
@@ -56,18 +58,21 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
                 that.showPromotion(modelId, promosCollection);
             });
 
+            App.Events.on('showLocal', function(modelId) {
+                that.showLocal(modelId, localesCollection);
+            });
+
             App.Events.on('showPromotionsList', function() {
-                that.showPromotionsList(promosCollection, collectionCached, promosCollectionView);
+                that.showPromotionsList(promosCollection, promosCollectionCached, promosCollectionView);
             });
 
             App.Events.on('showLocalesList', function() {
-                that.showLocalesList(localesCollection, localesCollectionView);
+                that.showLocalesList(localesCollection, localesCollectionCached, localesCollectionView);
             });
         },
 
-        showPromotionsList: function(promosCollection, collectionCached, promosCollectionView) {
-            console.log("entra showPromotionsList");
-            promosCollection.reset(collectionCached.models);
+        showPromotionsList: function(promosCollection, promosCollectionCached, promosCollectionView) {
+            promosCollection.reset(promosCollectionCached.models);
 
             if (promosCollectionView.isDestroyed) {
                 promosCollectionView = new Views.Promos({
@@ -77,7 +82,9 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
             this.promosRegion.show(promosCollectionView);
         },
 
-        showLocalesList: function(localesCollection, localesCollectionView) {
+        showLocalesList: function(localesCollection, localesCollectionCached, localesCollectionView) {
+            localesCollection.reset(localesCollectionCached.models);
+
             if (localesCollectionView.isDestroyed) {
                 localesCollectionView = new Views.Locales({
                     collection: localesCollection
@@ -87,11 +94,21 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
         },
 
         showPromotion: function(modelId, promosCollection) {
+            console.log("modelId -> ", modelId);
             promosCollection.reset(promosCollection.filter(function(model) {
                 return model.get('id') === modelId;
             }));
 
             App.Events.trigger('Header:Promo');
+        },
+
+        showLocal: function(modelTitle, localesCollection) {
+            localesCollection.reset(localesCollection.filter(function(model) {
+                // cambiar title por id
+                return model.get('title') === modelTitle;
+            }));
+
+            App.Events.trigger('Header:Local');
         }
 
     });

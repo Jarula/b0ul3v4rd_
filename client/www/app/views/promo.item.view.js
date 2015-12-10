@@ -1,5 +1,3 @@
-// 'use strict';
-
 App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) {    
     
     Views.Promo = Marionette.ItemView.extend({
@@ -19,7 +17,6 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
         },
 
         showPromotion: function() {
-            // Backbone.history.navigate('promotionsList/' + this.model.id, {trigger:true});
             App.Events.trigger('showPromotion', this.model.id);
         }
     });
