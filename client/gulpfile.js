@@ -61,7 +61,9 @@ gulp.task('js-build', function() {
         'www/app/views/main.layout.view.js',
         'www/app/views/header.item.view.js',
         'www/app/views/promo.item.view.js',
-        'www/app/views/promos.collection.view.js'
+        'www/app/views/promos.collection.view.js',
+        'www/app/views/local.item.view.js',
+        'www/app/views/locales.collection.view.js'
     ])
     .pipe(concat('bundle.js'))
     .pipe(size({
