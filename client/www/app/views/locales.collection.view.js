@@ -1,12 +1,12 @@
 App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) {
 
-    Views.Promos = Marionette.CollectionView.extend({
+    Views.Locales = Marionette.CollectionView.extend({
 
         tagName: 'ul',
 
         className: 'cards-container',
 
-        childView: Views.Promo
+        childView: Views.Local
 
     });
 

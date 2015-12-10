@@ -28091,6 +28091,13 @@ this["__templates"]["boulevard"] = this["__templates"]["boulevard"] || {};
 this["__templates"]["boulevard"]["header"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
     return "<header role=\"banner\">\n    <nav role=\"navigation\" class=\"blue darken-4\">\n        <div class=\"nav-wrapper container\">\n            <a id=\"logo-container\" href=\"#\" class=\"brand-logo\"><img src=\"./app/imgs/logo-boulevard.png\" alt=\"Logo Boulevard\"></a>\n            <!-- <i class=\"filter-icon material-icons\">call_split</i> -->\n            <ul class=\"right hide-on-med-and-down\">\n                <li><a href=\"#\">Link 1</a></li>\n                <li><a href=\"#\">Link 2</a></li>\n                <li><a href=\"#\">Link 3</a></li>\n            </ul>\n            <ul id=\"nav-mobile\" class=\"side-nav\" style=\"left: -250px;\">\n                <li><a href=\"#\" data-js=\"promociones\">Promociones</a></li>\n                <li><a href=\"#\" data-js=\"locales\">Locales</a></li>\n                <li><a href=\"#\" data-js=\"cine\">Cine</a></li>\n            </ul>\n            <a href=\"#\" data-activates=\"nav-mobile\" class=\"button-collapse\">\n                <i class=\"material-icons\">menu</i>\n            </a>\n            <a href=\"#\" class=\"button-arrow el-hide\">\n                <i class=\"arrow-icon\">arrow_back</i>\n            </a>\n        </div>\n    </nav>\n    <!-- <div class=\"filters blue darken-3\"></div> -->\n</header>";
 },"useData":true});
+this["__templates"]["boulevard"]["local"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+    var helper;
+
+  return "<div class=\"local\">\n    <div class=\"local-title\"></div>\n    <div class=\"local-description\"></div>\n    <div class=\"col s12 m7\">\n        <div class=\"card\">\n            <div class=\"card-image\">\n                <img src=\""
+    + this.escapeExpression(((helper = (helper = helpers.picture || (depth0 != null ? depth0.picture : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0,{"name":"picture","hash":{},"data":data}) : helper)))
+    + "\" height=\"200\">\n            </div>\n        </div>\n    </div>\n</div>";
+},"useData":true});
 this["__templates"]["boulevard"]["main"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
     return "<header data-js=\"header\">Header</header>\n<div data-js=\"promos\">Promos</div>";
 },"useData":true});
@@ -28147,6 +28154,17 @@ Handlebars.registerHelper("math", function(lvalue, operator, rvalue, options) {
     }[operator];
 });
 App.module('Boulevard.Models', function (Models, App, Backbone, Marionette, $, _) {
+    Models.Local = Backbone.Model.extend({
+        urlRoot: 'http://50.28.16.26/~jarularest/?q=api/json/store',
+        defaults: {
+            'id': null,
+            'title': null,
+            'picture': null,
+            'link': null
+        }
+    });
+});
+App.module('Boulevard.Models', function (Models, App, Backbone, Marionette, $, _) {
     Models.Promo = Backbone.Model.extend({
         urlRoot: 'http://50.28.16.26/~jarularest/?q=api/json/promotion',
         defaults: {
@@ -28156,6 +28174,14 @@ App.module('Boulevard.Models', function (Models, App, Backbone, Marionette, $, _
             'picture': null
         }
     });
+});
+App.module('Boulevard.Collections', function (Collections, App, Backbone, Marionette, $, _) {
+
+    Collections.Locales = Backbone.Collection.extend({
+        model: App.Boulevard.Models.Local,
+        url: 'http://50.28.16.26/~jarularest/?q=api/json/store'
+    });
+
 });
 App.module('Boulevard.Collections', function (Collections, App, Backbone, Marionette, $, _) {
 
@@ -28181,7 +28207,9 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
                 headerView,
                 promosCollection,
                 promosCollectionView,
-                collectionCached;
+                collectionCached,
+                localesCollection,
+                localesCollectionView;
 
             headerView = new Views.Header();
             this.headerRegion.show(headerView);
@@ -28190,7 +28218,7 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
             promosCollection.fetch({
                 cache: true,
                 expires: 600000,
-                'success': function(collection, response, options){
+                'success': function(collection, response, options) {
                     collection.trigger('fetched');
                     collectionCached = collection.clone();
                 }
@@ -28203,17 +28231,52 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
                 that.promosRegion.show(promosCollectionView);
             });
 
+            localesCollection = new App.Boulevard.Collections.Locales();
+            localesCollection.fetch({
+                cache: true,
+                expires: 600000,
+                'success': function(collection, response, options) {
+                    collection.trigger('Locales:fetched');
+                }
+            });
+            localesCollection.on('Locales:fetched', function() {
+                localesCollectionView = new Views.Locales({
+                    collection: localesCollection
+                });
+            });
+
             App.Events.on('showPromotion', function(modelId) {
                 that.showPromotion(modelId, promosCollection);
             });
 
             App.Events.on('showPromotionsList', function() {
-                that.showPromotionsList(promosCollection, collectionCached);
+                that.showPromotionsList(promosCollection, collectionCached, promosCollectionView);
+            });
+
+            App.Events.on('showLocalesList', function() {
+                that.showLocalesList(localesCollection, localesCollectionView);
             });
         },
 
-        showPromotionsList: function(promosCollection, collectionCached) {
+        showPromotionsList: function(promosCollection, collectionCached, promosCollectionView) {
+            console.log("entra showPromotionsList");
             promosCollection.reset(collectionCached.models);
+
+            if (promosCollectionView.isDestroyed) {
+                promosCollectionView = new Views.Promos({
+                    collection: promosCollection
+                });
+            }
+            this.promosRegion.show(promosCollectionView);
+        },
+
+        showLocalesList: function(localesCollection, localesCollectionView) {
+            if (localesCollectionView.isDestroyed) {
+                localesCollectionView = new Views.Locales({
+                    collection: localesCollection
+                });
+            }
+            this.promosRegion.show(localesCollectionView);
         },
 
         showPromotion: function(modelId, promosCollection) {
@@ -28236,11 +28299,17 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
 
         ui: {
             menu: '.button-collapse',
-            back: '.button-arrow'
+            back: '.button-arrow',
+            promociones: '[data-js="promociones"]',
+            locales: '[data-js="locales"]',
+            cine: '[data-js="cine"]'
         },
 
         events: {
-            'click @ui.back': 'showPromotionsList'
+            'click @ui.back': 'showPromotionsList',
+            'click @ui.promociones': 'showPromotionsList',
+            'click @ui.locales': 'showLocalesList',
+            'click @ui.cine': 'showCineList',
         },
 
         onRender: function() {
@@ -28257,7 +28326,23 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
         },
 
         showPromotionsList: function() {
+            console.log("showPromotionsList");
             App.Events.trigger('showPromotionsList');
+            this.ui.menu.sideNav('hide');
+            this.showMenuButton();
+        },
+
+        showLocalesList: function() {
+            console.log("showLocalesList");
+            App.Events.trigger('showLocalesList');
+            this.ui.menu.sideNav('hide');
+            this.showMenuButton();
+        },
+
+        showCineList: function() {
+            console.log("showCineList");
+            App.Events.trigger('showPromotionsList');
+            this.ui.menu.sideNav('hide');
             this.showMenuButton();
         },
 
@@ -28299,8 +28384,6 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
         }
     });
 });
-// 'use strict';
-
 App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) {
 
     Views.Promos = Marionette.CollectionView.extend({
@@ -28310,6 +28393,44 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
         className: 'cards-container',
 
         childView: Views.Promo
+
+    });
+
+});
+// 'use strict';
+
+App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) {    
+    
+    Views.Local = Marionette.ItemView.extend({
+
+        tagName: 'li',
+
+        className: 'row',
+
+        template: __templates.boulevard.local
+
+        // ui: {
+        //     promotion: '.local'
+        // },
+
+        // events: {
+        //     'click @ui.promotion': 'showPromotion'
+        // },
+
+        // showPromotion: function() {
+        //     App.Events.trigger('showPromotion', this.model.id);
+        // }
+    });
+});
+App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) {
+
+    Views.Locales = Marionette.CollectionView.extend({
+
+        tagName: 'ul',
+
+        className: 'cards-container',
+
+        childView: Views.Local
 
     });
 
