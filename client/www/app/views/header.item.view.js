@@ -30,6 +30,7 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
 
         showPromotionsList: function() {
             App.Events.trigger('showPromotionsList');
+            this.showMenuButton();
         },
 
         showBackButton: function() {
