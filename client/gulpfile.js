@@ -52,8 +52,16 @@ gulp.task('js-build', function() {
         'node_modules/backbone.marionette/lib/backbone.marionette.js',
         // 'www/app/backbone.fetch-cache.js',
         'node_modules/fastclick/lib/fastclick.js',
-        // app
-        
+        'www/app/app.js',
+        'www/app/boulevard.module.js',
+        'www/app/templates/templates.js',
+        'www/app/utils/handlebars-helpers.js',
+        'www/app/models/*.js',
+        'www/app/collections/*.js',
+        'www/app/views/main.layout.view.js',
+        'www/app/views/header.item.view.js',
+        'www/app/views/promo.item.view.js',
+        'www/app/views/promos.collection.view.js'
     ])
     .pipe(concat('bundle.js'))
     .pipe(size({
