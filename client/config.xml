@@ -22,10 +22,10 @@
         <preference name="android-targetSdkVersion" value="17" />
         <preference name="loadUrlTimeoutValue" value="60000" />
         <allow-intent href="market:*" />
-        <icon density="ldpi" src="www/res/android/logo_36x36.png" />
-        <icon density="mdpi" src="www/res/android/logo_48x48.png" />
-        <icon density="hdpi" src="www/res/android/logo_72x72.png" />
-        <icon density="xhdpi" src="www/res/android/logo_96x96.png" />
+        <icon density="ldpi" src="platform/android/res/drawable-ldpi/icon.png" />
+        <icon density="mdpi" src="platform/android/res/drawable-mdpi/icon.png" />
+        <icon density="hdpi" src="platform/android/res/drawable-hdpi/icon.png" />
+        <icon density="xhdpi" src="platform/android/res/drawable-xhdpi/icon.png" />
     </platform>
     <engine name="android" spec="~4.1.1" />
     <engine name="browser" spec="~4.0.0" />
