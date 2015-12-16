@@ -39,19 +39,21 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
         },
 
         showPromotionsList: function() {
+            navigator.vibrate([10]);
             App.Events.trigger('showPromotionsList');
             this.ui.menu.sideNav('hide');
             this.showMenuButton();
         },
 
         showLocalesList: function() {
+            navigator.vibrate([10]);
             App.Events.trigger('showLocalesList');
             this.ui.menu.sideNav('hide');
             this.showMenuButton();
         },
 
         showCineList: function() {
-            console.log("showCineList");
+            navigator.vibrate([10]);
             App.Events.trigger('showPromotionsList');
             this.ui.menu.sideNav('hide');
             this.showMenuButton();
@@ -69,6 +71,7 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
         },
 
         showlastList: function() {
+            navigator.vibrate([10]);
             this.lastList();
         }
 

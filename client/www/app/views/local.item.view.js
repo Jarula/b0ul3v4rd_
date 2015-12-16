@@ -17,6 +17,7 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
         },
 
         showLocal: function() {
+            navigator.vibrate([10]);
             // cambiar title por id
             App.Events.trigger('showLocal', this.model.get('title'));
         }

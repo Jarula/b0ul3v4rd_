@@ -17,6 +17,7 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
         },
 
         showPromotion: function() {
+            navigator.vibrate([10]);
             App.Events.trigger('showPromotion', this.model.id);
         }
     });
