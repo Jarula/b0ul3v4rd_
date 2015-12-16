@@ -23,14 +23,23 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
             this.headerRegion.show(headerView);
 
             promosCollection = new App.Boulevard.Collections.Promos();
-            promosCollection.fetch({
-                cache: true,
-                expires: 600000,
-                'success': function(collection, response, options) {
-                    collection.trigger('fetched');
-                    promosCollectionCached = collection.clone();
-                }
-            });
+            promosFetch = function(promosCollection) {
+                var that = this;
+                promosCollection.fetch({
+                    cache: true,
+                    expires: 600000,
+                    'success': function(collection, response, options) {
+                        console.log("success promos -> ", promosCollection);
+                        collection.trigger('fetched');
+                        promosCollectionCached = collection.clone();
+                    },
+                    'error': function(collection, response, options) {
+                        console.log("error promos -> ", promosCollection);
+                        promosFetch(promosCollection);
+                    }
+                });
+            };
+            promosFetch(promosCollection);
 
             promosCollection.on('fetched', function() {
                 promosCollectionView = new Views.Promos({
@@ -40,14 +49,24 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
             });
 
             localesCollection = new App.Boulevard.Collections.Locales();
-            localesCollection.fetch({
-                cache: true,
-                expires: 600000,
-                'success': function(collection, response, options) {
-                    collection.trigger('Locales:fetched');
-                    localesCollectionCached = collection.clone();
-                }
-            });
+            localesFetch = function(localesCollection) {
+                var that = this;
+                localesCollection.fetch({
+                    cache: true,
+                    expires: 600000,
+                    'success': function(collection, response, options) {
+                        console.log("success locales -> ", localesCollection);
+                        collection.trigger('Locales:fetched');
+                        localesCollectionCached = collection.clone();
+                    },
+                    'error': function(collection, response, options) {
+                        console.log("error locales -> ", localesCollection);
+                        localesFetch(localesCollection);
+                    }
+                });
+            };
+            localesFetch(localesCollection);
+
             localesCollection.on('Locales:fetched', function() {
                 localesCollectionView = new Views.Locales({
                     collection: localesCollection
