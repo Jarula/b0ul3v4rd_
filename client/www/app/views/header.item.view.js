@@ -15,6 +15,7 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
         },
 
         events: {
+            'click @ui.menu': 'openMenu',
             'click @ui.back': 'showlastList',
             'click @ui.promociones': 'showPromotionsList',
             'click @ui.locales': 'showLocalesList',
@@ -36,6 +37,10 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
             App.Events.on('Header:Local', function() {
                 that.showBackButton(that.showLocalesList);
             });
+        },
+
+        openMenu: function() {
+            navigator.vibrate([10]);
         },
 
         showPromotionsList: function() {

@@ -119,6 +119,7 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
             }));
 
             App.Events.trigger('Header:Promo');
+            App.Events.trigger('Promo:Single');
         },
 
         showLocal: function(modelTitle, localesCollection) {
