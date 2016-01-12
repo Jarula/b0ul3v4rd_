@@ -19,7 +19,7 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
             'click @ui.back': 'showlastList',
             'click @ui.promociones': 'showPromotionsList',
             'click @ui.locales': 'showLocalesList',
-            'click @ui.cine': 'showCineList',
+            'click @ui.cine': 'showFilmsList',
         },
 
         onRender: function() {
@@ -57,9 +57,9 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
             this.showMenuButton();
         },
 
-        showCineList: function() {
+        showFilmsList: function() {
             navigator.vibrate([10]);
-            App.Events.trigger('showPromotionsList');
+            App.Events.trigger('showFilmsList');
             this.ui.menu.sideNav('hide');
             this.showMenuButton();
         },

@@ -17,7 +17,10 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
                 promosCollectionCached,
                 localesCollection,
                 localesCollectionView,
-                localesCollectionCached;
+                localesCollectionCached,
+                filmsCollection,
+                filmsCollectionView,
+                filmsCollectionCached;
 
             headerView = new Views.Header();
             this.headerRegion.show(headerView);
@@ -73,6 +76,32 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
                 });
             });
 
+            filmsCollection = new App.Boulevard.Collections.Films();
+            filmsFetch = function(filmsCollection) {
+                var that = this;
+                filmsCollection.fetch({
+                    cache: true,
+                    expires: 600000,
+                    'success': function(collection, response, options) {
+                        console.log("success films -> ", filmsCollection);
+                        collection.trigger('Films:fetched');
+                        filmsCollectionCached = collection.clone();
+                    },
+                    'error': function(collection, response, options) {
+                        console.log("error films -> ", filmsCollection);
+                        filmsFetch(filmsCollection);
+                    }
+                });
+            };
+            filmsFetch(filmsCollection);
+
+            filmsCollection.on('Films:fetched', function() {
+                console.log("filmsCollection collectionnnnnn -> ", filmsCollection);
+                filmsCollectionView = new Views.Films({
+                    collection: filmsCollection
+                });
+            });
+
             App.Events.on('showPromotion', function(modelId) {
                 that.showPromotion(modelId, promosCollection);
             });
@@ -81,12 +110,20 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
                 that.showLocal(modelId, localesCollection);
             });
 
+            App.Events.on('showFilm', function(modelId) {
+                that.showFilm(modelId, filmsCollection);
+            });
+
             App.Events.on('showPromotionsList', function() {
                 that.showPromotionsList(promosCollection, promosCollectionCached, promosCollectionView);
             });
 
             App.Events.on('showLocalesList', function() {
                 that.showLocalesList(localesCollection, localesCollectionCached, localesCollectionView);
+            });
+
+            App.Events.on('showFilmsList', function() {
+                that.showFilmsList(filmsCollection, filmsCollectionCached, filmsCollectionView);
             });
         },
 
@@ -112,6 +149,17 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
             this.promosRegion.show(localesCollectionView);
         },
 
+        showFilmsList: function(filmsCollection, filmsCollectionCached, filmsCollectionView) {
+            filmsCollection.reset(filmsCollectionCached.models);
+
+            if (filmsCollectionView.isDestroyed) {
+                filmsCollectionView = new Views.Films({
+                    collection: filmsCollection
+                });
+            }
+            this.promosRegion.show(filmsCollectionView);
+        },
+
         showPromotion: function(modelId, promosCollection) {
             console.log("modelId -> ", modelId);
             promosCollection.reset(promosCollection.filter(function(model) {
@@ -129,6 +177,15 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
             }));
 
             App.Events.trigger('Header:Local');
+        },
+
+        showFilm: function(modelTitle, filmsCollection) {
+            filmsCollection.reset(filmsCollection.filter(function(model) {
+                // cambiar title por id
+                return model.get('title') === modelTitle;
+            }));
+
+            App.Events.trigger('Header:Film');
         }
 
     });
