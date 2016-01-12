@@ -8501,9 +8501,10 @@ nav .button-arrow i {
 ---------------------------------------------------------------*/
 
 .sk-circle {
-    margin: 100px auto;
+    margin: 50% auto;
     width: 70px;
     height: 70px;
+    list-style-type: none;
     position: relative;
 }
 

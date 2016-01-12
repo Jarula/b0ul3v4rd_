@@ -1,5 +1,16 @@
 this["__templates"] = this["__templates"] || {};
 this["__templates"]["boulevard"] = this["__templates"]["boulevard"] || {};
+this["__templates"]["boulevard"]["film"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+    var stack1, alias1=this.lambda, alias2=this.escapeExpression;
+
+  return "<div class=\"film\">\n    <div class=\"film-title\"></div>\n    <div class=\"film-description\"></div>\n    <div class=\"col s12 m7\">\n        <div class=\"card\">\n            <div class=\"card-image\">\n                <img src=\""
+    + alias2(alias1(((stack1 = (depth0 != null ? depth0.node : depth0)) != null ? stack1.imagen : stack1), depth0))
+    + "\" height=\"200\">\n            </div>\n            <div class=\"card-content\">\n                <h4>"
+    + alias2(alias1(((stack1 = (depth0 != null ? depth0.node : depth0)) != null ? stack1['título'] : stack1), depth0))
+    + "</h4>\n                <p>"
+    + alias2(alias1(((stack1 = (depth0 != null ? depth0.node : depth0)) != null ? stack1.summary : stack1), depth0))
+    + "</p>\n            </div>\n        </div>\n    </div>\n</div>";
+},"useData":true});
 this["__templates"]["boulevard"]["header"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
     return "<header role=\"banner\">\n    <nav role=\"navigation\" class=\"blue darken-4\">\n        <div class=\"nav-wrapper container\">\n            <a id=\"logo-container\" href=\"#\" class=\"brand-logo\"><img src=\"./app/imgs/logo-boulevard.png\" alt=\"Logo Boulevard\"></a>\n            <!-- <i class=\"filter-icon material-icons\">call_split</i> -->\n            <ul class=\"right hide-on-med-and-down\">\n                <li><a href=\"#\">Link 1</a></li>\n                <li><a href=\"#\">Link 2</a></li>\n                <li><a href=\"#\">Link 3</a></li>\n            </ul>\n            <ul id=\"nav-mobile\" class=\"side-nav\" style=\"left: -250px;\">\n                <li><a href=\"#\" data-js=\"promociones\">Promociones</a></li>\n                <li><a href=\"#\" data-js=\"locales\">Locales</a></li>\n                <li><a href=\"#\" data-js=\"cine\">Cine</a></li>\n            </ul>\n            <a href=\"#\" data-activates=\"nav-mobile\" class=\"button-collapse\">\n                <i class=\"material-icons\">menu</i>\n            </a>\n            <a href=\"#\" class=\"button-arrow el-hide\">\n                <i class=\"arrow-icon\">arrow_back</i>\n            </a>\n        </div>\n    </nav>\n    <!-- <div class=\"filters blue darken-3\"></div> -->\n</header>";
 },"useData":true});
@@ -11,7 +22,7 @@ this["__templates"]["boulevard"]["local"] = Handlebars.template({"compiler":[6,"
     + "\" height=\"200\">\n            </div>\n        </div>\n    </div>\n</div>";
 },"useData":true});
 this["__templates"]["boulevard"]["main"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
-    return "<header data-js=\"header\">Header</header>\n<div data-js=\"promos\">Promos</div>";
+    return "<header data-js=\"header\">Header</header>\n<div data-js=\"promos\">\n	<li class=\"sk-circle selected\">\n		<div class=\"sk-circle1 sk-child\"></div>\n		<div class=\"sk-circle2 sk-child\"></div>\n		<div class=\"sk-circle3 sk-child\"></div>\n		<div class=\"sk-circle4 sk-child\"></div>\n		<div class=\"sk-circle5 sk-child\"></div>\n		<div class=\"sk-circle6 sk-child\"></div>\n		<div class=\"sk-circle7 sk-child\"></div>\n		<div class=\"sk-circle8 sk-child\"></div>\n		<div class=\"sk-circle9 sk-child\"></div>\n		<div class=\"sk-circle10 sk-child\"></div>\n		<div class=\"sk-circle11 sk-child\"></div>\n		<div class=\"sk-circle12 sk-child\"></div>\n	</li>\n</div>";
 },"useData":true});
 this["__templates"]["boulevard"]["promo"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
     var helper, alias1=helpers.helperMissing, alias2="function", alias3=this.escapeExpression;
