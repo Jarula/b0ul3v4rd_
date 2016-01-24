@@ -76,8 +76,8 @@ gulp.task('js-build', function() {
 
 gulp.task('styles-build', function() {
     gulp.src([
-            'node_modules/materialize-css/dist/css/materialize.css',
-            'www/app/styles/*.css'
+            'www/app/styles/materialize.css',
+            'www/app/styles/styles.css'
         ])
         .pipe(autoprefixer({
             browsers: ['last 5 versions','Firefox ESR']
