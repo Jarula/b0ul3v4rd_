@@ -1,7 +1,9 @@
 <header role="banner">
     <nav role="navigation" class="blue darken-4">
         <div class="nav-wrapper container">
-            <a id="logo-container" href="#" class="brand-logo"><img src="./app/imgs/logo-boulevard.png" alt="Logo Boulevard"></a>
+            <a id="logo-container" href="#" class="brand-logo">
+                <img src="./app/imgs/logo-boulevard.png" alt="Logo Boulevard">
+            </a>
             <!-- <i class="filter-icon material-icons">call_split</i> -->
             <ul class="right hide-on-med-and-down">
                 <li><a href="#">Link 1</a></li>
@@ -19,7 +21,19 @@
             <a href="#" class="button-arrow el-hide">
                 <i class="arrow-icon">arrow_back</i>
             </a>
+            <a href="#" class="search-icon"><i class="material-icons">search</i></a>
         </div>
     </nav>
-    <!-- <div class="filters blue darken-3"></div> -->
+
+    <nav class="search-container el-hide">
+        <div class="nav-wrapper">
+            <form>
+                <div class="input-field">
+                    <input id="search" type="search" data-js="search" required>
+                    <label for="search"><i class="material-icons">search</i></label>
+                    <i class="material-icons" data-js="close-icon">close</i>
+                </div>
+            </form>
+        </div>
+    </nav>
 </header>
