@@ -11,7 +11,10 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
             back: '.button-arrow',
             promociones: '[data-js="promociones"]',
             locales: '[data-js="locales"]',
-            cine: '[data-js="cine"]'
+            cine: '[data-js="cine"]',
+            searchIcon: '.search-icon',
+            search: '[data-js="search"]',
+            closeIcon: '[data-js="close-icon"]'
         },
 
         events: {
@@ -20,6 +23,9 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
             'click @ui.promociones': 'showPromotionsList',
             'click @ui.locales': 'showLocalesList',
             'click @ui.cine': 'showFilmsList',
+            'click @ui.searchIcon': 'searchFocus',
+            'keyup @ui.search': 'searchFilter',
+            'click @ui.closeIcon': 'searchClose'
         },
 
         onRender: function() {
@@ -78,7 +84,32 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
         showlastList: function() {
             navigator.vibrate([10]);
             this.lastList();
-        }
+        },
 
+        searchFocus: function(event) {
+            var that = this;
+
+            this.ui.search.closest('nav').show();
+            this.ui.search.focus();
+
+            this.isSearchBarOpen = true;
+
+            $('body').on('click.search', function(event) {
+                setTimeout(function() {
+                    if (!$("#search:focus")[0]) {
+                        that.ui.search.closest('nav').hide();
+                        $('body').unbind('click.search');
+                    }
+                }, 100);
+            });
+        },
+
+        searchFilter: function(event) {
+            App.Events.trigger('change:searchFilter', event.target.value);
+        },
+
+        searchClose: function() {
+            this.ui.search.closest('nav').hide();
+        }
     });
 });

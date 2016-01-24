@@ -28100,7 +28100,7 @@ this["__templates"]["boulevard"]["film"] = Handlebars.template({"compiler":[6,">
     + "</p>\n            </div>\n        </div>\n    </div>\n</div>";
 },"useData":true});
 this["__templates"]["boulevard"]["header"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
-    return "<header role=\"banner\">\n    <nav role=\"navigation\" class=\"blue darken-4\">\n        <div class=\"nav-wrapper container\">\n            <a id=\"logo-container\" href=\"#\" class=\"brand-logo\"><img src=\"./app/imgs/logo-boulevard.png\" alt=\"Logo Boulevard\"></a>\n            <!-- <i class=\"filter-icon material-icons\">call_split</i> -->\n            <ul class=\"right hide-on-med-and-down\">\n                <li><a href=\"#\">Link 1</a></li>\n                <li><a href=\"#\">Link 2</a></li>\n                <li><a href=\"#\">Link 3</a></li>\n            </ul>\n            <ul id=\"nav-mobile\" class=\"side-nav\" style=\"left: -250px;\">\n                <li><a href=\"#\" data-js=\"promociones\">Promociones</a></li>\n                <li><a href=\"#\" data-js=\"locales\">Locales</a></li>\n                <li><a href=\"#\" data-js=\"cine\">Cine</a></li>\n            </ul>\n            <a href=\"#\" data-activates=\"nav-mobile\" class=\"button-collapse\">\n                <i class=\"material-icons\">menu</i>\n            </a>\n            <a href=\"#\" class=\"button-arrow el-hide\">\n                <i class=\"arrow-icon\">arrow_back</i>\n            </a>\n        </div>\n    </nav>\n    <!-- <div class=\"filters blue darken-3\"></div> -->\n</header>";
+    return "<header role=\"banner\">\n    <nav role=\"navigation\" class=\"blue darken-4\">\n        <div class=\"nav-wrapper container\">\n            <a id=\"logo-container\" href=\"#\" class=\"brand-logo\">\n                <img src=\"./app/imgs/logo-boulevard.png\" alt=\"Logo Boulevard\">\n            </a>\n            <!-- <i class=\"filter-icon material-icons\">call_split</i> -->\n            <ul class=\"right hide-on-med-and-down\">\n                <li><a href=\"#\">Link 1</a></li>\n                <li><a href=\"#\">Link 2</a></li>\n                <li><a href=\"#\">Link 3</a></li>\n            </ul>\n            <ul id=\"nav-mobile\" class=\"side-nav\" style=\"left: -250px;\">\n                <li><a href=\"#\" data-js=\"promociones\">Promociones</a></li>\n                <li><a href=\"#\" data-js=\"locales\">Locales</a></li>\n                <li><a href=\"#\" data-js=\"cine\">Cine</a></li>\n            </ul>\n            <a href=\"#\" data-activates=\"nav-mobile\" class=\"button-collapse\">\n                <i class=\"material-icons\">menu</i>\n            </a>\n            <a href=\"#\" class=\"button-arrow el-hide\">\n                <i class=\"arrow-icon\">arrow_back</i>\n            </a>\n            <a href=\"#\" class=\"search-icon\"><i class=\"material-icons\">search</i></a>\n        </div>\n    </nav>\n\n    <nav class=\"search-container el-hide\">\n        <div class=\"nav-wrapper\">\n            <form>\n                <div class=\"input-field\">\n                    <input id=\"search\" type=\"search\" data-js=\"search\" required>\n                    <label for=\"search\"><i class=\"material-icons\">search</i></label>\n                    <i class=\"material-icons\" data-js=\"close-icon\">close</i>\n                </div>\n            </form>\n        </div>\n    </nav>\n</header>";
 },"useData":true});
 this["__templates"]["boulevard"]["local"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
     var helper;
@@ -28259,12 +28259,10 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
                     cache: true,
                     expires: 600000,
                     'success': function(collection, response, options) {
-                        console.log("success promos -> ", promosCollection);
                         collection.trigger('fetched');
                         promosCollectionCached = collection.clone();
                     },
                     'error': function(collection, response, options) {
-                        console.log("error promos -> ", promosCollection);
                         promosFetch(promosCollection);
                     }
                 });
@@ -28285,12 +28283,10 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
                     cache: true,
                     expires: 600000,
                     'success': function(collection, response, options) {
-                        console.log("success locales -> ", localesCollection);
                         collection.trigger('Locales:fetched');
                         localesCollectionCached = collection.clone();
                     },
                     'error': function(collection, response, options) {
-                        console.log("error locales -> ", localesCollection);
                         localesFetch(localesCollection);
                     }
                 });
@@ -28310,12 +28306,10 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
                     cache: true,
                     expires: 600000,
                     'success': function(collection, response, options) {
-                        console.log("success films -> ", filmsCollection);
                         collection.trigger('Films:fetched');
                         filmsCollectionCached = collection.clone();
                     },
                     'error': function(collection, response, options) {
-                        console.log("error films -> ", filmsCollection);
                         filmsFetch(filmsCollection);
                     }
                 });
@@ -28323,7 +28317,6 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
             filmsFetch(filmsCollection);
 
             filmsCollection.on('Films:fetched', function() {
-                console.log("filmsCollection collectionnnnnn -> ", filmsCollection);
                 filmsCollectionView = new Views.Films({
                     collection: filmsCollection
                 });
@@ -28331,6 +28324,10 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
 
             App.Events.on('showPromotion', function(modelId) {
                 that.showPromotion(modelId, promosCollection);
+            });
+
+            App.Events.on('change:searchFilter', function(searchValue) {
+                that.filterBySearch(searchValue, promosCollection, promosCollectionCached);
             });
 
             App.Events.on('showLocal', function(modelId) {
@@ -28388,7 +28385,6 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
         },
 
         showPromotion: function(modelId, promosCollection) {
-            console.log("modelId -> ", modelId);
             promosCollection.reset(promosCollection.filter(function(model) {
                 return model.get('id') === modelId;
             }));
@@ -28413,6 +28409,17 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
             }));
 
             App.Events.trigger('Header:Film');
+        },
+
+        filterBySearch: function(searchValue, promosCollection, promosCollectionCached) {
+            promosCollection.reset(promosCollectionCached.models);
+            promosCollection.reset(promosCollection.filter(function(model) {
+                var modelTitle = model.get('title'),
+                    modelTitleLowerCase = modelTitle.toLowerCase(),
+                    searchValueLowerCase = searchValue.toLowerCase();
+
+                return modelTitleLowerCase.indexOf(searchValueLowerCase) !== -1;
+            }));
         }
 
     });
@@ -28430,7 +28437,10 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
             back: '.button-arrow',
             promociones: '[data-js="promociones"]',
             locales: '[data-js="locales"]',
-            cine: '[data-js="cine"]'
+            cine: '[data-js="cine"]',
+            searchIcon: '.search-icon',
+            search: '[data-js="search"]',
+            closeIcon: '[data-js="close-icon"]'
         },
 
         events: {
@@ -28439,6 +28449,9 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
             'click @ui.promociones': 'showPromotionsList',
             'click @ui.locales': 'showLocalesList',
             'click @ui.cine': 'showFilmsList',
+            'click @ui.searchIcon': 'searchFocus',
+            'keyup @ui.search': 'searchFilter',
+            'click @ui.closeIcon': 'searchClose'
         },
 
         onRender: function() {
@@ -28497,8 +28510,33 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
         showlastList: function() {
             navigator.vibrate([10]);
             this.lastList();
-        }
+        },
 
+        searchFocus: function(event) {
+            var that = this;
+
+            this.ui.search.closest('nav').show();
+            this.ui.search.focus();
+
+            this.isSearchBarOpen = true;
+
+            $('body').on('click.search', function(event) {
+                setTimeout(function() {
+                    if (!$("#search:focus")[0]) {
+                        that.ui.search.closest('nav').hide();
+                        $('body').unbind('click.search');
+                    }
+                }, 100);
+            });
+        },
+
+        searchFilter: function(event) {
+            App.Events.trigger('change:searchFilter', event.target.value);
+        },
+
+        searchClose: function() {
+            this.ui.search.closest('nav').hide();
+        }
     });
 });
 App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) {    

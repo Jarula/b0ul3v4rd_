@@ -32,12 +32,10 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
                     cache: true,
                     expires: 600000,
                     'success': function(collection, response, options) {
-                        console.log("success promos -> ", promosCollection);
                         collection.trigger('fetched');
                         promosCollectionCached = collection.clone();
                     },
                     'error': function(collection, response, options) {
-                        console.log("error promos -> ", promosCollection);
                         promosFetch(promosCollection);
                     }
                 });
@@ -58,12 +56,10 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
                     cache: true,
                     expires: 600000,
                     'success': function(collection, response, options) {
-                        console.log("success locales -> ", localesCollection);
                         collection.trigger('Locales:fetched');
                         localesCollectionCached = collection.clone();
                     },
                     'error': function(collection, response, options) {
-                        console.log("error locales -> ", localesCollection);
                         localesFetch(localesCollection);
                     }
                 });
@@ -83,12 +79,10 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
                     cache: true,
                     expires: 600000,
                     'success': function(collection, response, options) {
-                        console.log("success films -> ", filmsCollection);
                         collection.trigger('Films:fetched');
                         filmsCollectionCached = collection.clone();
                     },
                     'error': function(collection, response, options) {
-                        console.log("error films -> ", filmsCollection);
                         filmsFetch(filmsCollection);
                     }
                 });
@@ -96,7 +90,6 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
             filmsFetch(filmsCollection);
 
             filmsCollection.on('Films:fetched', function() {
-                console.log("filmsCollection collectionnnnnn -> ", filmsCollection);
                 filmsCollectionView = new Views.Films({
                     collection: filmsCollection
                 });
@@ -104,6 +97,10 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
 
             App.Events.on('showPromotion', function(modelId) {
                 that.showPromotion(modelId, promosCollection);
+            });
+
+            App.Events.on('change:searchFilter', function(searchValue) {
+                that.filterBySearch(searchValue, promosCollection, promosCollectionCached);
             });
 
             App.Events.on('showLocal', function(modelId) {
@@ -161,7 +158,6 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
         },
 
         showPromotion: function(modelId, promosCollection) {
-            console.log("modelId -> ", modelId);
             promosCollection.reset(promosCollection.filter(function(model) {
                 return model.get('id') === modelId;
             }));
@@ -186,6 +182,17 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
             }));
 
             App.Events.trigger('Header:Film');
+        },
+
+        filterBySearch: function(searchValue, promosCollection, promosCollectionCached) {
+            promosCollection.reset(promosCollectionCached.models);
+            promosCollection.reset(promosCollection.filter(function(model) {
+                var modelTitle = model.get('title'),
+                    modelTitleLowerCase = modelTitle.toLowerCase(),
+                    searchValueLowerCase = searchValue.toLowerCase();
+
+                return modelTitleLowerCase.indexOf(searchValueLowerCase) !== -1;
+            }));
         }
 
     });
