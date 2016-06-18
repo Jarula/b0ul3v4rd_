@@ -374,3 +374,38 @@ input[type=search] ~ .material-icons,
 input[type=search]:focus ~ .material-icons {
     color: #26a69a;
 }
+
+
+/* Card
+---------------------------------------------------------------*/
+
+.card h4 {
+    font-size: 20px;
+    margin: 0;
+    text-transform: uppercase;
+}
+
+
+/* Film
+---------------------------------------------------------------*/
+
+.card-film {
+    margin: 0 auto;
+    width: 210px;
+}
+
+.card-film .card-image img {
+    height: auto;
+    margin: 0 auto;
+    width: 210px;
+}
+
+.card-film .card-content {
+    padding: 10px;
+}
+
+.card-film h4 {
+    font-size: 20px;
+    margin: 0;
+    text-align: center;
+}
