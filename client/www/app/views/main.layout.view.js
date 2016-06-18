@@ -128,9 +128,13 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
             App.Events.on('showFilmsList', function() {
                 that.showFilmsList(filmsCollection, filmsCollectionCached, filmsCollectionView);
             });
+
+            window.scrollTo(0, 0);
         },
 
         showPromotionsList: function(promosCollection, promosCollectionCached, promosCollectionView) {
+            window.scrollTo(0, 0);
+
             promosCollection.reset(promosCollectionCached.models);
 
             if (promosCollectionView.isDestroyed) {
@@ -145,6 +149,8 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
         },
 
         showLocalesList: function(localesCollection, localesCollectionCached, localesCollectionView) {
+            window.scrollTo(0, 0);
+
             localesCollection.reset(localesCollectionCached.models);
 
             if (localesCollectionView.isDestroyed) {
@@ -159,6 +165,8 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
         },
 
         showFilmsList: function(filmsCollection, filmsCollectionCached, filmsCollectionView) {
+            window.scrollTo(0, 0);
+
             filmsCollection.reset(filmsCollectionCached.models);
 
             if (filmsCollectionView.isDestroyed) {
@@ -173,7 +181,14 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
         },
 
         showPromotion: function(modelId, promosCollection) {
+            window.scrollTo(0, 0);
+
             promosCollection.reset(promosCollection.filter(function(model) {
+                if (model.get('id') === modelId) {
+                    alert("si");
+                } else {
+                    alert("no");
+                }
                 return model.get('id') === modelId;
             }));
 
@@ -190,13 +205,17 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
         //     App.Events.trigger('Header:Local');
         // },
 
-        showFilm: function(modelTitle, filmsCollection) {
+        showFilm: function(modelImage, filmsCollection) {
+            window.scrollTo(0, 0);
+
             filmsCollection.reset(filmsCollection.filter(function(model) {
                 // cambiar title por id
-                return model.get('title') === modelTitle;
+                var node = model.get('node');
+                return node.imagen === modelImage;
             }));
 
             App.Events.trigger('Header:Film');
+            App.Events.trigger('Film:Single');
         },
 
         promotionsFilterBySearch: function(searchValue, promosCollection, promosCollectionCached) {

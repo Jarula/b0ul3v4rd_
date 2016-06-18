@@ -28095,7 +28095,9 @@ this["__templates"]["boulevard"]["film"] = Handlebars.template({"compiler":[6,">
     + alias2(alias1(((stack1 = (depth0 != null ? depth0.node : depth0)) != null ? stack1.imagen : stack1), depth0))
     + "\" height=\"200\">\n            </div>\n            <div class=\"card-content\">\n                <h4>"
     + alias2(alias1(((stack1 = (depth0 != null ? depth0.node : depth0)) != null ? stack1['título'] : stack1), depth0))
-    + "</h4>\n            </div>\n        </div>\n    </div>\n</div>";
+    + "</h4>\n                <p>"
+    + alias2(alias1(((stack1 = (depth0 != null ? depth0.node : depth0)) != null ? stack1.summary : stack1), depth0))
+    + "</p>\n            </div>\n        </div>\n    </div>\n</div>";
 },"useData":true});
 this["__templates"]["boulevard"]["header"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
     return "<header role=\"banner\">\n    <nav role=\"navigation\" class=\"blue darken-4\">\n        <div class=\"nav-wrapper container\">\n            <a id=\"logo-container\" href=\"#\" class=\"brand-logo\">\n                <img src=\"./app/imgs/logo-boulevard.png\" alt=\"Logo Boulevard\">\n            </a>\n            <!-- <i class=\"filter-icon material-icons\">call_split</i> -->\n            <ul class=\"right hide-on-med-and-down\">\n                <li><a href=\"#\">Link 1</a></li>\n                <li><a href=\"#\">Link 2</a></li>\n                <li><a href=\"#\">Link 3</a></li>\n            </ul>\n            <ul id=\"nav-mobile\" class=\"side-nav\" style=\"left: -250px;\">\n                <li><a href=\"#\" data-js=\"promociones\">Promociones</a></li>\n                <li><a href=\"#\" data-js=\"locales\">Locales</a></li>\n                <li><a href=\"#\" data-js=\"cine\">Cine</a></li>\n            </ul>\n            <a href=\"#\" data-activates=\"nav-mobile\" class=\"button-collapse\">\n                <i class=\"material-icons\">menu</i>\n            </a>\n            <a href=\"#\" class=\"button-arrow el-hide\">\n                <i class=\"arrow-icon\">arrow_back</i>\n            </a>\n            <a href=\"#\" class=\"search-icon\"><i class=\"material-icons\">search</i></a>\n        </div>\n    </nav>\n\n    <nav class=\"search-container el-hide\">\n        <div class=\"nav-wrapper\">\n            <form>\n                <div class=\"input-field\">\n                    <input id=\"search\" type=\"search\" data-js=\"search\" required>\n                    <label for=\"search\"><i class=\"material-icons\">search</i></label>\n                    <i class=\"material-icons\" data-js=\"close-icon\">close</i>\n                </div>\n            </form>\n        </div>\n    </nav>\n</header>";
@@ -28353,9 +28355,13 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
             App.Events.on('showFilmsList', function() {
                 that.showFilmsList(filmsCollection, filmsCollectionCached, filmsCollectionView);
             });
+
+            window.scrollTo(0, 0);
         },
 
         showPromotionsList: function(promosCollection, promosCollectionCached, promosCollectionView) {
+            window.scrollTo(0, 0);
+
             promosCollection.reset(promosCollectionCached.models);
 
             if (promosCollectionView.isDestroyed) {
@@ -28370,6 +28376,8 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
         },
 
         showLocalesList: function(localesCollection, localesCollectionCached, localesCollectionView) {
+            window.scrollTo(0, 0);
+
             localesCollection.reset(localesCollectionCached.models);
 
             if (localesCollectionView.isDestroyed) {
@@ -28384,6 +28392,8 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
         },
 
         showFilmsList: function(filmsCollection, filmsCollectionCached, filmsCollectionView) {
+            window.scrollTo(0, 0);
+
             filmsCollection.reset(filmsCollectionCached.models);
 
             if (filmsCollectionView.isDestroyed) {
@@ -28398,7 +28408,14 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
         },
 
         showPromotion: function(modelId, promosCollection) {
+            window.scrollTo(0, 0);
+
             promosCollection.reset(promosCollection.filter(function(model) {
+                if (model.get('id') === modelId) {
+                    alert("si");
+                } else {
+                    alert("no");
+                }
                 return model.get('id') === modelId;
             }));
 
@@ -28415,13 +28432,17 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
         //     App.Events.trigger('Header:Local');
         // },
 
-        showFilm: function(modelTitle, filmsCollection) {
+        showFilm: function(modelImage, filmsCollection) {
+            window.scrollTo(0, 0);
+
             filmsCollection.reset(filmsCollection.filter(function(model) {
                 // cambiar title por id
-                return model.get('title') === modelTitle;
+                var node = model.get('node');
+                return node.imagen === modelImage;
             }));
 
             App.Events.trigger('Header:Film');
+            App.Events.trigger('Film:Single');
         },
 
         promotionsFilterBySearch: function(searchValue, promosCollection, promosCollectionCached) {
@@ -28491,6 +28512,10 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
 
             App.Events.on('Header:Local', function() {
                 that.showBackButton(that.showLocalesList);
+            });
+
+            App.Events.on('Header:Film', function() {
+                that.showBackButton(that.showFilmsList);
             });
         },
 
@@ -28664,17 +28689,26 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
         template: __templates.boulevard.film,
 
         ui: {
-            local: '.film'
+            film: '.film'
         },
 
         events: {
             'click @ui.film': 'showFilm'
         },
 
+        initialize: function() {
+            var that = this;
+            App.Events.on('Film:Single', function() {
+                $(that.ui.film).addClass('film-individual');
+                $(that.ui.film).removeClass('film');
+            });
+        },
+
         showFilm: function() {
             navigator.vibrate([10]);
             // cambiar title por id
-            App.Events.trigger('showFilm', this.model.get('title'));
+            var node = this.model.get('node');
+            App.Events.trigger('showFilm', node.imagen);
         }
     });
 });

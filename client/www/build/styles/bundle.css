@@ -8430,7 +8430,7 @@ footer.page-footer {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    width: 250px;
+    /*width: 250px;*/
 }
 
 .cards-container .promotion-individual .card-content p {
@@ -8736,6 +8736,21 @@ input[type=search]:focus ~ .material-icons {
 
 .card-film .card-content {
     padding: 10px;
+}
+
+.film .card-content p {
+    display: none;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 250px;
+}
+
+.film-individual .card-content p {
+    display: inline-block;
+    text-overflow: initial;
+    white-space: normal;
+    width: 190px;
 }
 
 .card-film h4 {

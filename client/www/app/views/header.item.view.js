@@ -43,6 +43,10 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
             App.Events.on('Header:Local', function() {
                 that.showBackButton(that.showLocalesList);
             });
+
+            App.Events.on('Header:Film', function() {
+                that.showBackButton(that.showFilmsList);
+            });
         },
 
         openMenu: function() {
