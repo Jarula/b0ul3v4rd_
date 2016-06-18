@@ -12,14 +12,14 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
             local: '.local'
         },
 
-        events: {
-            'click @ui.local': 'showLocal'
-        },
+        // events: {
+        //     'click @ui.local': 'showLocal'
+        // },
 
-        showLocal: function() {
-            navigator.vibrate([10]);
-            // cambiar title por id
-            App.Events.trigger('showLocal', this.model.get('title'));
-        }
+        // showLocal: function() {
+        //     navigator.vibrate([10]);
+        //     // cambiar title por id
+        //     App.Events.trigger('showLocal', this.model.get('title'));
+        // }
     });
 });

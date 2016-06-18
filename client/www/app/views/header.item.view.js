@@ -105,7 +105,11 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
         },
 
         searchFilter: function(event) {
-            App.Events.trigger('change:searchFilter', event.target.value);
+            if (App.currentSection === 'Promotions') {
+                App.Events.trigger('change:promotionsSearchFilter', event.target.value);
+            } else if (App.currentSection === 'Locales') {
+                App.Events.trigger('change:localesSearchFilter', event.target.value);
+            }
         },
 
         searchClose: function() {

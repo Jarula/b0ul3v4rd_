@@ -28091,13 +28091,11 @@ this["__templates"]["boulevard"] = this["__templates"]["boulevard"] || {};
 this["__templates"]["boulevard"]["film"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
     var stack1, alias1=this.lambda, alias2=this.escapeExpression;
 
-  return "<div class=\"film\">\n    <div class=\"film-title\"></div>\n    <div class=\"film-description\"></div>\n    <div class=\"col s12 m7\">\n        <div class=\"card\">\n            <div class=\"card-image\">\n                <img src=\""
+  return "<div class=\"film\">\n    <div class=\"film-title\"></div>\n    <div class=\"film-description\"></div>\n    <div class=\"col s12 m7\">\n        <div class=\"card card-film\">\n            <div class=\"card-image\">\n                <img src=\""
     + alias2(alias1(((stack1 = (depth0 != null ? depth0.node : depth0)) != null ? stack1.imagen : stack1), depth0))
     + "\" height=\"200\">\n            </div>\n            <div class=\"card-content\">\n                <h4>"
     + alias2(alias1(((stack1 = (depth0 != null ? depth0.node : depth0)) != null ? stack1['título'] : stack1), depth0))
-    + "</h4>\n                <p>"
-    + alias2(alias1(((stack1 = (depth0 != null ? depth0.node : depth0)) != null ? stack1.summary : stack1), depth0))
-    + "</p>\n            </div>\n        </div>\n    </div>\n</div>";
+    + "</h4>\n            </div>\n        </div>\n    </div>\n</div>";
 },"useData":true});
 this["__templates"]["boulevard"]["header"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
     return "<header role=\"banner\">\n    <nav role=\"navigation\" class=\"blue darken-4\">\n        <div class=\"nav-wrapper container\">\n            <a id=\"logo-container\" href=\"#\" class=\"brand-logo\">\n                <img src=\"./app/imgs/logo-boulevard.png\" alt=\"Logo Boulevard\">\n            </a>\n            <!-- <i class=\"filter-icon material-icons\">call_split</i> -->\n            <ul class=\"right hide-on-med-and-down\">\n                <li><a href=\"#\">Link 1</a></li>\n                <li><a href=\"#\">Link 2</a></li>\n                <li><a href=\"#\">Link 3</a></li>\n            </ul>\n            <ul id=\"nav-mobile\" class=\"side-nav\" style=\"left: -250px;\">\n                <li><a href=\"#\" data-js=\"promociones\">Promociones</a></li>\n                <li><a href=\"#\" data-js=\"locales\">Locales</a></li>\n                <li><a href=\"#\" data-js=\"cine\">Cine</a></li>\n            </ul>\n            <a href=\"#\" data-activates=\"nav-mobile\" class=\"button-collapse\">\n                <i class=\"material-icons\">menu</i>\n            </a>\n            <a href=\"#\" class=\"button-arrow el-hide\">\n                <i class=\"arrow-icon\">arrow_back</i>\n            </a>\n            <a href=\"#\" class=\"search-icon\"><i class=\"material-icons\">search</i></a>\n        </div>\n    </nav>\n\n    <nav class=\"search-container el-hide\">\n        <div class=\"nav-wrapper\">\n            <form>\n                <div class=\"input-field\">\n                    <input id=\"search\" type=\"search\" data-js=\"search\" required>\n                    <label for=\"search\"><i class=\"material-icons\">search</i></label>\n                    <i class=\"material-icons\" data-js=\"close-icon\">close</i>\n                </div>\n            </form>\n        </div>\n    </nav>\n</header>";
@@ -28293,6 +28291,8 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
             };
             localesFetch(localesCollection);
 
+            App.currentSection = 'Promotions';
+
             localesCollection.on('Locales:fetched', function() {
                 localesCollectionView = new Views.Locales({
                     collection: localesCollection
@@ -28326,13 +28326,17 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
                 that.showPromotion(modelId, promosCollection);
             });
 
-            App.Events.on('change:searchFilter', function(searchValue) {
-                that.filterBySearch(searchValue, promosCollection, promosCollectionCached);
+            App.Events.on('change:promotionsSearchFilter', function(searchValue) {
+                that.promotionsFilterBySearch(searchValue, promosCollection, promosCollectionCached);
             });
 
-            App.Events.on('showLocal', function(modelId) {
-                that.showLocal(modelId, localesCollection);
+            App.Events.on('change:localesSearchFilter', function(searchValue) {
+                that.localesFilterBySearch(searchValue, localesCollection, localesCollectionCached);
             });
+
+            // App.Events.on('showLocal', function(modelId) {
+            //     that.showLocal(modelId, localesCollection);
+            // });
 
             App.Events.on('showFilm', function(modelId) {
                 that.showFilm(modelId, filmsCollection);
@@ -28360,6 +28364,9 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
                 });
             }
             this.promosRegion.show(promosCollectionView);
+
+            App.currentSection = 'Promotions';
+            $('.search-icon').show();
         },
 
         showLocalesList: function(localesCollection, localesCollectionCached, localesCollectionView) {
@@ -28371,6 +28378,9 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
                 });
             }
             this.promosRegion.show(localesCollectionView);
+
+            App.currentSection = 'Locales';
+            $('.search-icon').show();
         },
 
         showFilmsList: function(filmsCollection, filmsCollectionCached, filmsCollectionView) {
@@ -28382,6 +28392,9 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
                 });
             }
             this.promosRegion.show(filmsCollectionView);
+
+            App.currentSection = 'Films';
+            $('.search-icon').hide();
         },
 
         showPromotion: function(modelId, promosCollection) {
@@ -28393,14 +28406,14 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
             App.Events.trigger('Promo:Single');
         },
 
-        showLocal: function(modelTitle, localesCollection) {
-            localesCollection.reset(localesCollection.filter(function(model) {
-                // cambiar title por id
-                return model.get('title') === modelTitle;
-            }));
+        // showLocal: function(modelTitle, localesCollection) {
+        //     localesCollection.reset(localesCollection.filter(function(model) {
+        //         // cambiar title por id
+        //         return model.get('title') === modelTitle;
+        //     }));
 
-            App.Events.trigger('Header:Local');
-        },
+        //     App.Events.trigger('Header:Local');
+        // },
 
         showFilm: function(modelTitle, filmsCollection) {
             filmsCollection.reset(filmsCollection.filter(function(model) {
@@ -28411,7 +28424,7 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
             App.Events.trigger('Header:Film');
         },
 
-        filterBySearch: function(searchValue, promosCollection, promosCollectionCached) {
+        promotionsFilterBySearch: function(searchValue, promosCollection, promosCollectionCached) {
             promosCollection.reset(promosCollectionCached.models);
             promosCollection.reset(promosCollection.filter(function(model) {
                 var modelTitle = model.get('title'),
@@ -28420,8 +28433,18 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
 
                 return modelTitleLowerCase.indexOf(searchValueLowerCase) !== -1;
             }));
-        }
+        },
 
+        localesFilterBySearch: function(searchValue, localesCollection, localesCollectionCached) {
+            localesCollection.reset(localesCollectionCached.models);
+            localesCollection.reset(localesCollection.filter(function(model) {
+                var modelTitle = model.get('title'),
+                    modelTitleLowerCase = modelTitle.toLowerCase(),
+                    searchValueLowerCase = searchValue.toLowerCase();
+
+                return modelTitleLowerCase.indexOf(searchValueLowerCase) !== -1;
+            }));
+        }
     });
 });
 // 'use strict';
@@ -28531,7 +28554,11 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
         },
 
         searchFilter: function(event) {
-            App.Events.trigger('change:searchFilter', event.target.value);
+            if (App.currentSection === 'Promotions') {
+                App.Events.trigger('change:promotionsSearchFilter', event.target.value);
+            } else if (App.currentSection === 'Locales') {
+                App.Events.trigger('change:localesSearchFilter', event.target.value);
+            }
         },
 
         searchClose: function() {
@@ -28602,15 +28629,15 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
             local: '.local'
         },
 
-        events: {
-            'click @ui.local': 'showLocal'
-        },
+        // events: {
+        //     'click @ui.local': 'showLocal'
+        // },
 
-        showLocal: function() {
-            navigator.vibrate([10]);
-            // cambiar title por id
-            App.Events.trigger('showLocal', this.model.get('title'));
-        }
+        // showLocal: function() {
+        //     navigator.vibrate([10]);
+        //     // cambiar title por id
+        //     App.Events.trigger('showLocal', this.model.get('title'));
+        // }
     });
 });
 App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) {

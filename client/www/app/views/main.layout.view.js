@@ -66,6 +66,8 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
             };
             localesFetch(localesCollection);
 
+            App.currentSection = 'Promotions';
+
             localesCollection.on('Locales:fetched', function() {
                 localesCollectionView = new Views.Locales({
                     collection: localesCollection
@@ -99,13 +101,17 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
                 that.showPromotion(modelId, promosCollection);
             });
 
-            App.Events.on('change:searchFilter', function(searchValue) {
-                that.filterBySearch(searchValue, promosCollection, promosCollectionCached);
+            App.Events.on('change:promotionsSearchFilter', function(searchValue) {
+                that.promotionsFilterBySearch(searchValue, promosCollection, promosCollectionCached);
             });
 
-            App.Events.on('showLocal', function(modelId) {
-                that.showLocal(modelId, localesCollection);
+            App.Events.on('change:localesSearchFilter', function(searchValue) {
+                that.localesFilterBySearch(searchValue, localesCollection, localesCollectionCached);
             });
+
+            // App.Events.on('showLocal', function(modelId) {
+            //     that.showLocal(modelId, localesCollection);
+            // });
 
             App.Events.on('showFilm', function(modelId) {
                 that.showFilm(modelId, filmsCollection);
@@ -133,6 +139,9 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
                 });
             }
             this.promosRegion.show(promosCollectionView);
+
+            App.currentSection = 'Promotions';
+            $('.search-icon').show();
         },
 
         showLocalesList: function(localesCollection, localesCollectionCached, localesCollectionView) {
@@ -144,6 +153,9 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
                 });
             }
             this.promosRegion.show(localesCollectionView);
+
+            App.currentSection = 'Locales';
+            $('.search-icon').show();
         },
 
         showFilmsList: function(filmsCollection, filmsCollectionCached, filmsCollectionView) {
@@ -155,6 +167,9 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
                 });
             }
             this.promosRegion.show(filmsCollectionView);
+
+            App.currentSection = 'Films';
+            $('.search-icon').hide();
         },
 
         showPromotion: function(modelId, promosCollection) {
@@ -166,14 +181,14 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
             App.Events.trigger('Promo:Single');
         },
 
-        showLocal: function(modelTitle, localesCollection) {
-            localesCollection.reset(localesCollection.filter(function(model) {
-                // cambiar title por id
-                return model.get('title') === modelTitle;
-            }));
+        // showLocal: function(modelTitle, localesCollection) {
+        //     localesCollection.reset(localesCollection.filter(function(model) {
+        //         // cambiar title por id
+        //         return model.get('title') === modelTitle;
+        //     }));
 
-            App.Events.trigger('Header:Local');
-        },
+        //     App.Events.trigger('Header:Local');
+        // },
 
         showFilm: function(modelTitle, filmsCollection) {
             filmsCollection.reset(filmsCollection.filter(function(model) {
@@ -184,7 +199,7 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
             App.Events.trigger('Header:Film');
         },
 
-        filterBySearch: function(searchValue, promosCollection, promosCollectionCached) {
+        promotionsFilterBySearch: function(searchValue, promosCollection, promosCollectionCached) {
             promosCollection.reset(promosCollectionCached.models);
             promosCollection.reset(promosCollection.filter(function(model) {
                 var modelTitle = model.get('title'),
@@ -193,7 +208,17 @@ App.module('Boulevard.Views', function (Views, App, Backbone, Marionette, $, _) 
 
                 return modelTitleLowerCase.indexOf(searchValueLowerCase) !== -1;
             }));
-        }
+        },
 
+        localesFilterBySearch: function(searchValue, localesCollection, localesCollectionCached) {
+            localesCollection.reset(localesCollectionCached.models);
+            localesCollection.reset(localesCollection.filter(function(model) {
+                var modelTitle = model.get('title'),
+                    modelTitleLowerCase = modelTitle.toLowerCase(),
+                    searchValueLowerCase = searchValue.toLowerCase();
+
+                return modelTitleLowerCase.indexOf(searchValueLowerCase) !== -1;
+            }));
+        }
     });
 });
