@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.boulevardShopping" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="com.boulevardShopping" version="0.0.3" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>Boulevard Shopping</name>
     <description>
         Boulevard Shopping App
@@ -22,10 +22,10 @@
         <preference name="android-targetSdkVersion" value="17" />
         <preference name="loadUrlTimeoutValue" value="60000" />
         <allow-intent href="market:*" />
-        <icon density="ldpi" src="platform/android/res/drawable-ldpi/icon.png" />
-        <icon density="mdpi" src="platform/android/res/drawable-mdpi/icon.png" />
-        <icon density="hdpi" src="platform/android/res/drawable-hdpi/icon.png" />
-        <icon density="xhdpi" src="platform/android/res/drawable-xhdpi/icon.png" />
+        <icon density="ldpi" src="icon24x24.png" />
+        <icon density="mdpi" src="icon48x48.png" />
+        <icon density="hdpi" src="icon72x72.png" />
+        <icon density="xhdpi" src="icon96x96.png" />
     </platform>
     <engine name="android" spec="~4.1.1" />
     <engine name="browser" spec="~4.0.0" />
